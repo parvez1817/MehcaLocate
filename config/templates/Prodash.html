@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mechalocate | Provider Dashboard</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg-1: #1a5140;
+    --bg-2: #288760;
+    --bg-3: #5ca87c;
+    --primary: #b7e5ba;
+    --secondary: #5ca87c;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(183, 229, 186, 0.12);
+    --glass: rgba(26, 81, 64, 0.6);
+    --glow: rgba(183, 229, 186, 0.25);
+    --danger: #ff6b6b;
+    --success: #20c997;
+    --warning: #ffc107;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    color: var(--text);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* TOP BAR */
+.top-bar {
+    width: 100%;
+    height: 70px;
+    background: rgba(26, 81, 64, 0.82);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+}
+.brand span { color: var(--primary); }
+
+.top-bar-icons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+.top-bar-icons i { transition: color 0.3s; cursor: pointer; }
+.top-bar-icons i:hover { color: var(--primary); }
+
+/* LAYOUT */
+.layout {
+    display: flex;
+    min-height: calc(100vh - 70px);
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 260px;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid var(--card-border);
+    padding: 32px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    background: rgba(183, 229, 186, 0.08);
+    color: var(--primary);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(183, 229, 186, 0.1);
+}
+
+.sidebar a i { font-size: 1.1rem; width: 24px; text-align: center; }
+
+.sidebar a.text-danger { margin-top: auto; color: var(--danger) !important; }
+.sidebar a.text-danger:hover {
+    background: rgba(255, 107, 107, 0.1);
+    color: var(--danger);
+    box-shadow: 0 4px 16px rgba(255, 107, 107, 0.15);
+}
+
+/* MAIN CONTENT */
+.main-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* HEADINGS */
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.section-title i { color: var(--primary); font-size: 1.4rem; }
+
+/* LAYOUT GRIDS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+/* CARDS */
+.card-glass {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-glass:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    border-color: rgba(183, 229, 186, 0.3);
+}
+
+.card-title-sm {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+}
+.stat-sub { color: var(--success); font-size: 0.85rem; font-weight: 500; margin-top: 8px;}
+
+/* TABLE */
+.table-responsive {
+    margin: 0;
+}
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text);
+    color: var(--text);
+    margin: 0;
+}
+.table th {
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--card-border);
+    padding: 16px 12px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.table td {
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 18px 12px;
+    font-size: 0.95rem;
+}
+.table tr:last-child td { border-bottom: none; }
+.table a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+.table a:hover { text-decoration: underline; color: var(--secondary); }
+
+/* BADGES */
+.badge {
+    padding: 8px 14px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+.bg-warning { background-color: rgba(255, 193, 7, 0.15) !important; color: #ffc107 !important; border: 1px solid rgba(255, 193, 7, 0.4); }
+.bg-success { background-color: rgba(32, 201, 151, 0.15) !important; color: #20c997 !important; border: 1px solid rgba(32, 201, 151, 0.4); }
+.bg-info { background-color: rgba(183, 229, 186, 0.15) !important; color: var(--primary) !important; border: 1px solid rgba(183, 229, 186, 0.4); }
+
+/* LISTS (Earnings) */
+.earning-list { list-style: none; padding: 0; margin: 0; }
+.earning-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.95rem;
+}
+.earning-list li:last-child { border-bottom: none; padding-bottom: 0; }
+.earning-list span.val { font-weight: 600; color: var(--text); }
+
+/* RATINGS */
+.rating-lg {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+.rating-star { color: var(--primary); font-size: 1.8rem; }
+.rating-text { font-size: 2rem; font-weight: 700; font-family: 'Playfair Display', serif;}
+
+/* NOTIFICATIONS */
+.notifications { display: flex; flex-direction: column; gap: 14px; }
+.notification {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--card-border);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.notification:hover {
+    transform: translateX(4px);
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(183, 229, 186, 0.3);
+}
+
+.notification-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.notification.info .notification-icon { background: rgba(183, 229, 186, 0.15); color: var(--primary); }
+.notification.success .notification-icon { background: rgba(32, 201, 151, 0.15); color: #20c997; }
+
+.notification .text { font-weight: 500; font-size: 0.9rem; color: var(--text); line-height: 1.4;}
+.notification .time { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+/* BUTTONS */
+.btn-glow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 28px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #1a5140;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s;
+    width: 100%;
+}
+.btn-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(183, 229, 186, 0.35);
+}
+
+/* MODALS */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(26, 81, 64, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-window {
+    background: var(--card-bg);
+    border: 1px solid rgba(183, 229, 186, 0.3);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 500px;
+    padding: 32px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 20px rgba(183, 229, 186, 0.15);
+    transform: scale(0.95) translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+.modal-overlay.active .modal-window {
+    transform: scale(1) translateY(0);
+}
+.modal-close {
+    position: absolute;
+    top: 24px; right: 24px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    display: grid; place-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.modal-close:hover {
+    background: rgba(255,107,107,0.15);
+    color: var(--danger);
+    transform: rotate(90deg);
+}
+.modal-title-box {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.modal-title-box i { color: var(--primary); }
+
+/* RESPONSIVE */
+@media(max-width: 992px) {
+    .content-grid { grid-template-columns: 1fr; }
+}
+@media(max-width: 768px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--card-border); padding: 20px; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+    .sidebar a { padding: 10px 14px; font-size: 0.85rem; }
+    .sidebar a.text-danger { margin-top: 0; }
+    .main-content { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <h1 class="brand"><i class="fa-solid fa-car-side" style="color:var(--primary);"></i> Mechalocate <span>| Dashboard</span></h1>
+    <!-- Icons removed as requested -->
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <a href="#dashboard" class="active"><i class="fa-solid fa-border-all"></i> Overview</a>
+    <a href="#requests"><i class="fa-solid fa-clipboard-list"></i> Service Requests</a>
+    <a href="#ratings" onclick="openModal('ratingsModal')"><i class="fa-solid fa-star"></i> Ratings</a>
+    <a href="#notifications"><i class="fa-solid fa-bell"></i> Notifications</a>
+    <a href="#settings"><i class="fa-solid fa-gear"></i> Settings</a>
+    <a href="#" onclick="logout(event)" class="text-danger">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="section-title m-0">Welcome back, Provider!</h2>
+            <p class="text-muted mt-2 mb-0" style="color: var(--text-muted) !important;">Here's what's happening today.</p>
+        </div>
+    </div>
+
+    <!-- STATS GRID -->
+    <div class="stats-grid">
+        <!-- Earnings removed as requested -->
+
+        <!-- Ratings -->
+        <div class="card-glass" id="ratings" style="cursor: pointer;" onclick="openModal('ratingsModal')">
+            <div class="card-title-sm"><i class="fa-solid fa-star" style="color: var(--primary);"></i> Overall Rating</div>
+            <div class="rating-lg">
+                <span class="rating-text">4.5</span>
+                <div class="rating-star">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star-half-stroke"></i>
+                </div>
+            </div>
+            <p class="mt-3 mb-0" style="color: var(--text-muted); font-size: 0.9rem;">Based on 128 reviews</p>
+        </div>
+        
+        <!-- Settings Quick Link -->
+        <div class="card-glass d-flex flex-column justify-content-center" id="settings">
+            <div style="width: 56px; height: 56px; border-radius: 16px; background: rgba(183, 229, 186, 0.1); color: var(--primary); display:grid; place-items:center; font-size: 1.5rem; margin-bottom: 20px;">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+            <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 8px;">Contact Info</h4>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Update your registered mobile number for notifications.</p>
+            <button class="btn-glow flex-shrink-0 mt-auto" onclick="openModal('changeNumberModal')"><i class="fa-solid fa-phone"></i> Change Number</button>
+        </div>
+    </div>
+
+    <!-- CONTENT GRID -->
+    <div class="content-grid">
+        
+        <!-- Service Requests -->
+        <div class="card-glass" id="requests" style="padding: 0;">
+            <div style="padding: 24px 28px; border-bottom: 1px solid var(--card-border);">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0;"><i class="fa-solid fa-wrench" style="color: var(--primary); margin-right: 8px;"></i> Active Requests</h3>
+                    <span class="badge bg-warning">{{ active_requests.count }} Pending</span>
+                </div>
+            </div>
+            <div class="table-responsive" style="padding: 0 16px 16px;">
+                <table class="table">
+                <thead>
+                <tr>
+                <th>Customer</th>
+                <th>Subject</th>
+                <th>Mobile Number</th>
+                <th>Date</th>
+                <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for req in active_requests %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width: 36px; height: 36px; border-radius: 50%; background: #2c3e50; display:grid; place-items:center; font-weight:600; font-size:0.8rem;">{{ req.name|first|upper }}</div>
+                            <span style="font-weight: 500;">{{ req.name }}</span>
+                        </div>
+                    </td>
+                    <td><div style="color: var(--text-muted); font-size: 0.85rem;">{{ req.subject }}</div></td>
+                    <td><div style="font-weight:500;">{{ req.mobile_number }}</div></td>
+                    <td><span class="badge bg-warning">{{ req.created_at|date:"M d, Y" }}</span></td>
+                    <td><a href="tel:{{ req.mobile_number }}" style="background: rgba(183, 229, 186,0.1); padding: 8px 16px; border-radius: 8px; display:inline-block;"><i class="fa-solid fa-phone"></i> Call</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted);">No active requests found.</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Notifications -->
+        <div class="card-glass" id="notifications" style="padding: 0;">
+            <div style="padding: 24px 28px; border-bottom: 1px solid var(--card-border);">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h3 style="font-size: 1.1rem; font-weight: 600; margin: 0;"><i class="fa-solid fa-bell" style="color: var(--primary); margin-right: 8px;"></i> Updates</h3>
+                </div>
+            </div>
+            <div style="padding: 20px;">
+                <div class="notifications">
+                    <div class="notification info">
+                        <div class="notification-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <div>
+                            <div class="text">New service request received</div>
+                            <div class="time">Just now</div>
+                        </div>
+                    </div>
+                    
+                    <div class="notification success" style="opacity: 0.7;">
+                        <div class="notification-icon"><i class="fa-regular fa-star"></i></div>
+                        <div>
+                            <div class="text">Anjali rated you 5 stars!</div>
+                            <div class="time">Yesterday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+<!-- Earnings modal removed -->
+
+<!-- RATINGS MODAL -->
+<div class="modal-overlay" id="ratingsModal">
+    <div class="modal-window" style="max-width: 550px;">
+        <button class="modal-close" onclick="closeModal('ratingsModal')"><i class="fa-solid fa-xmark"></i></button>
+        <h2 class="modal-title-box"><i class="fa-solid fa-star-half-stroke"></i> Recent Reviews</h2>
+        
+        <div class="d-flex flex-column gap-3">
+            <div style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 16px; border: 1px solid var(--card-border);">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span style="font-weight: 600;">Anjali S.</span>
+                    <span class="text-warning"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                </div>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">"Super fast and helpful! Arrived within 15 minutes when my tyre went flat."</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 16px; border: 1px solid var(--card-border);">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span style="font-weight: 600;">Rahul M.</span>
+                    <span class="text-warning"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></span>
+                </div>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">"Good expertise on engine diagnostics. Price was fair."</p>
+            </div>
+        </div>
+        <button class="btn-glow mt-4" style="width:100%;" onclick="closeModal('ratingsModal')">Close</button>
+    </div>
+</div>
+
+<!-- CHANGE NUMBER MODAL -->
+<div class="modal-overlay" id="changeNumberModal">
+    <div class="modal-window" style="max-width: 480px;">
+        <button class="modal-close" type="button" onclick="closeModal('changeNumberModal')"><i class="fa-solid fa-xmark"></i></button>
+        <div style="width: 68px; height: 68px; border-radius: 50%; background: rgba(183, 229, 186, 0.1); color: var(--primary); display:grid; place-items:center; font-size: 1.8rem; margin: 0 auto 24px; box-shadow: 0 0 30px rgba(183, 229, 186, 0.2);">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+        </div>
+        
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--text); margin-bottom: 8px; text-align: center;">Change Number</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; text-align: center; margin-bottom: 36px; line-height: 1.5;">Please enter your new mobile number.</p>
+        
+        <form onsubmit="handleUpdate(event)">
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">Current Mobile Number</label>
+                <input type="text" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px; color: var(--text); font-size: 1rem; opacity: 0.6; cursor: not-allowed;" value="+91 82485 18232" disabled>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;">New Mobile Number</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 18px; top: 15px; color: var(--text-muted); font-weight: 600;">+91</span>
+                    <input type="tel" id="newNumberInput" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px 14px 58px; color: var(--text); font-size: 1rem;" placeholder="Enter 10-digit number" required pattern="[0-9]{10}">
+                </div>
+            </div>
+            
+            <button type="submit" id="updateNumBtn" class="btn-glow" style="width:100%;"><i class="fa-solid fa-floppy-disk"></i> Update Number</button>
+        </form>
+    </div>
+</div>
+
+<!-- LOGOUT MODAL -->
+<div class="modal-overlay" id="logoutModal">
+    <div class="modal-window" style="max-width: 400px; text-align: center;">
+        <button class="modal-close" onclick="closeModal('logoutModal')"><i class="fa-solid fa-xmark"></i></button>
+        <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 107, 107, 0.15); color: var(--danger); display:grid; place-items:center; font-size: 1.8rem; margin: 0 auto 20px;">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </div>
+        <h2 style="font-family:'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 12px;">Confirm Logout</h2>
+        <p class="text-muted" style="font-size: 0.95rem; margin-bottom: 32px;">Are you sure you want to end your session? You won't receive new requests while offline.</p>
+        
+        <div class="d-flex gap-3">
+            <button class="btn btn-outline-secondary flex-fill text-white" style="border-radius: 50px; border-color: rgba(255,255,255,0.2); background: transparent;" onclick="closeModal('logoutModal')">Cancel</button>
+            <button id="logoutBtn" class="btn btn-danger flex-fill" style="border-radius: 50px; background: var(--danger); border: none; font-weight: 600;">Sign Out</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal-overlay')) {
+        event.target.classList.remove('active');
+    }
+}
+
+function logout(event) {
+    if(event) event.preventDefault();
+    openModal('logoutModal');
+}
+
+function handleUpdate(e) {
+    e.preventDefault();
+    let btn = document.getElementById('updateNumBtn');
+    btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Phone Number Changed!';
+    btn.style.background = 'linear-gradient(135deg, #20c997, #158a66)';
+    btn.style.color = 'white';
+    
+    setTimeout(() => {
+        closeModal('changeNumberModal');
+        // Reset button state smoothly after closing
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Number';
+            btn.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
+            btn.style.color = '#1a5140';
+            document.getElementById('newNumberInput').value = '';
+        }, 300);
+    }, 1500);
+}
+
+// Logout Navigation
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    window.location.href = '{% url "centre" %}';
+});
+</script>
+
+</body>
+</html>

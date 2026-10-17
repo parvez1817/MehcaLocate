@@ -1,0 +1,7 @@
+Django==5.2.12
+google-auth==2.38.0
+python-dotenv==1.0.1
+mysqlclient==2.2.1  # If fails on Windows: pip install PyMySQL instead
+Pillow==11.1.0  # For ImageField in models
+requests==2.32.3
+

@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mechalocate - Login</title>
+  <a href="{% url 'login' %}"></a>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #1a5140 0%, #288760 50%, #5ca87c 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ── Google SSO Button Wrapper ── */
+    #googleButtonPlaceholder {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+    #googleButtonPlaceholder > div {
+      width: 100% !important;
+    }
+
+    /* ── Geometric background ── */
+    .geo-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .geo-square {
+      position: absolute;
+      border: 1.5px solid rgba(183, 229, 186, 0.12);
+      animation: spinSlow 18s linear infinite;
+    }
+
+    .geo-square.a {
+      width: 380px;
+      height: 380px;
+      top: -130px;
+      right: -130px;
+      border-radius: 40px;
+      animation-duration: 22s;
+    }
+
+    .geo-square.b {
+      width: 220px;
+      height: 220px;
+      bottom: -70px;
+      left: -70px;
+      border-radius: 24px;
+      animation-duration: 28s;
+      animation-direction: reverse;
+      border-color: rgba(92, 168, 124, 0.13);
+    }
+
+    .geo-square.c {
+      width: 100px;
+      height: 100px;
+      top: 48%;
+      left: 60%;
+      border-radius: 12px;
+      animation-duration: 13s;
+      border-color: rgba(183, 229, 186, 0.09);
+    }
+
+    .geo-tri {
+      position: absolute;
+      width: 0;
+      height: 0;
+      animation: driftTri 12s ease-in-out infinite alternate;
+    }
+
+    .geo-tri.a {
+      border-left: 44px solid transparent;
+      border-right: 44px solid transparent;
+      border-bottom: 76px solid rgba(183, 229, 186, 0.06);
+      top: 20%;
+      right: 18%;
+      animation-duration: 11s;
+    }
+
+    .geo-tri.b {
+      border-left: 28px solid transparent;
+      border-right: 28px solid transparent;
+      border-bottom: 48px solid rgba(92, 168, 124, 0.07);
+      bottom: 22%;
+      left: 8%;
+      animation-duration: 16s;
+      animation-delay: -5s;
+    }
+
+    .geo-tri.c {
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-bottom: 32px solid rgba(183, 229, 186, 0.06);
+      top: 65%;
+      right: 42%;
+      animation-duration: 9s;
+      animation-delay: -3s;
+    }
+
+    .geo-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(183, 229, 186, 0.1);
+      animation: floatRing 9s ease-in-out infinite alternate;
+    }
+
+    .geo-ring.a {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 25%;
+      animation-duration: 12s;
+    }
+
+    .geo-ring.b {
+      width: 80px;
+      height: 80px;
+      bottom: 20%;
+      right: 15%;
+      animation-duration: 8s;
+      animation-delay: -2s;
+      border-color: rgba(92, 168, 124, 0.11);
+    }
+
+    .geo-ring.c {
+      width: 44px;
+      height: 44px;
+      top: 75%;
+      left: 48%;
+      animation-duration: 7s;
+      animation-delay: -4s;
+    }
+
+    .geo-lines {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 280px;
+      height: 280px;
+      opacity: 0.055;
+      background-image: repeating-linear-gradient(-45deg,
+          rgba(183, 229, 186, 1) 0px, rgba(183, 229, 186, 1) 1px,
+          transparent 1px, transparent 22px);
+      mask-image: radial-gradient(ellipse at bottom left, black 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at bottom left, black 30%, transparent 80%);
+    }
+
+    .geo-lines.top-right {
+      top: 0;
+      right: 0;
+      bottom: auto;
+      left: auto;
+      mask-image: radial-gradient(ellipse at top right, black 30%, transparent 80%);
+      -webkit-mask-image: radial-gradient(ellipse at top right, black 30%, transparent 80%);
+      background-image: repeating-linear-gradient(45deg,
+          rgba(92, 168, 124, 1) 0px, rgba(92, 168, 124, 1) 1px,
+          transparent 1px, transparent 22px);
+    }
+
+    @keyframes spinSlow {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes driftTri {
+      from {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      to {
+        transform: translateY(-26px) rotate(10deg);
+      }
+    }
+
+    @keyframes floatRing {
+      from {
+        transform: translateY(0);
+      }
+
+      to {
+        transform: translateY(-18px);
+      }
+    }
+
+    /* ── Layout ── */
+    .layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1020px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+
+    .panel {
+      display: flex;
+      align-items: stretch;
+      position:relative;
+      width: 100%;
+      max-width: 900px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), 0 0 80px rgba(183, 229, 186, 0.08);
+      border: 1px solid rgba(183, 229, 186, 0.18);
+      animation: riseIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ── Left brand column ── */
+    .col-brand {
+      flex: 0 0 300px;
+      background: linear-gradient(160deg, rgba(26, 81, 64, 0.96) 0%, rgba(40, 135, 96, 0.99) 100%);
+      border-right: 1px solid rgba(183, 229, 186, 0.15);
+      padding: 56px 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .col-brand::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      left: -80px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(183, 229, 186, 0.11) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .col-brand::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      right: -60px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(92, 168, 124, 0.09) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .brand-top {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(183, 229, 186, 0.15), rgba(92, 168, 124, 0.15));
+      border: 1.5px solid rgba(183, 229, 186, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      box-shadow: 0 6px 20px rgba(183, 229, 186, 0.15);
+    }
+
+    .brand-icon-wrap i {
+      font-size: 34px;
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      margin-bottom: 5px;
+    }
+
+    .brand-tagline {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(183, 229, 186, 0.55);
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .brand-desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.75;
+    }
+
+    /* Trust badges */
+    .trust-list {
+      position: relative;
+      z-index: 1;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .trust-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .trust-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(183, 229, 186, 0.07);
+      border: 1px solid rgba(183, 229, 186, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .trust-icon i {
+      font-size: 15px;
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .trust-copy {
+      flex: 1;
+    }
+
+    .trust-title {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .trust-sub {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+      line-height: 1.5;
+    }
+
+    /* ── Right form column ── */
+    .col-form {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.97) 0%, rgba(248, 250, 255, 0.99) 100%);
+      padding: 52px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-y: auto;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: #b7e5ba;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .form-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a5140;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .form-heading span {
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .form-subheading {
+      font-size: 13px;
+      color: #7c8ba8;
+      margin-bottom: 30px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Input fields ── */
+    .input-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .form-control {
+      width: 100%;
+      border: 2px solid #e8eef5;
+      border-radius: 12px;
+      padding: 13px 16px 13px 44px;
+      font-size: 14px;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.8);
+      color: #1a5140;
+      display: block;
+    }
+
+    .form-control::placeholder {
+      color: #a0afc8;
+    }
+
+    .form-control:focus {
+      border-color: #b7e5ba;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(183, 229, 186, 0.1), 0 6px 16px rgba(183, 229, 186, 0.12);
+      outline: none;
+      transform: translateY(-2px);
+    }
+
+    .form-control.is-error {
+      border-color: #ef5350;
+    }
+
+    .form-control.is-error:focus {
+      box-shadow: 0 0 0 3px rgba(239, 83, 80, 0.1), 0 6px 16px rgba(239, 83, 80, 0.12);
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0afc8;
+      font-size: 15px;
+      pointer-events: none;
+      transition: color 0.3s ease;
+    }
+
+    .form-control:focus~.input-icon,
+    .form-control:not(:placeholder-shown)~.input-icon {
+      color: #b7e5ba;
+    }
+
+    /* Password toggle */
+    .pwd-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0afc8;
+      cursor: pointer;
+      font-size: 14px;
+      transition: color 0.3s ease;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .pwd-toggle:hover {
+      color: #b7e5ba;
+    }
+
+    .error-msg {
+      color: #ef5350;
+      font-size: 11px;
+      margin-top: 5px;
+      display: none;
+      padding-left: 4px;
+      animation: slideInError 0.3s ease;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    .server-msg {
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .server-msg.error {
+      background: rgba(239, 83, 80, 0.1);
+      border: 1px solid rgba(239, 83, 80, 0.35);
+      color: #c62828;
+    }
+
+    /* ── Forgot password ── */
+    .forgot-row {
+      text-align: right;
+      margin-bottom: 22px;
+      margin-top: -6px;
+    }
+
+    .forgot-row a {
+      font-size: 12px;
+      color: #7c8ba8;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-row a:hover {
+      color: #b7e5ba;
+    }
+
+    /* ── Divider ── */
+    .h-rule {
+      height: 1px;
+      background: linear-gradient(90deg, #e5e7eb, transparent);
+      margin: 22px 0;
+    }
+
+    /* ── Buttons ── */
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .btn-main {
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 22px rgba(183, 229, 186, 0.28);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .btn-main::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-main:hover::before {
+      left: 100%;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(183, 229, 186, 0.38);
+    }
+
+    .btn-main:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: linear-gradient(135deg, #f3f4f6 0%, #e9eaec 100%);
+      color: #1f2937;
+      border: 1.5px solid #d1d5db;
+      border-radius: 12px;
+      padding: 13px 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .btn-outline:hover {
+      border-color: #b7e5ba;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-outline:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-arrow {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+
+    .btn-outline .btn-arrow {
+      background: rgba(183, 229, 186, 0.1);
+      color: #b7e5ba;
+    }
+
+    /* ── Footer links ── */
+    .form-footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .footer-box {
+      background: #f9fafb;
+      border: 1px solid #e8eef5;
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .footer-box:hover {
+      border-color: #b7e5ba;
+      box-shadow: 0 4px 14px rgba(183, 229, 186, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .footer-label {
+      font-size: 10px;
+      color: #a0afc8;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .footer-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      color: white;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 10px rgba(183, 229, 186, 0.2);
+    }
+
+    .footer-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(183, 229, 186, 0.3);
+      color: white;
+    }
+
+    /* ── Forgot Password Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 81, 64, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 255, 1) 100%);
+      border-radius: 20px;
+      padding: 40px;
+      width: 90%;
+      max-width: 480px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(183, 229, 186, 0.15);
+      border: 1px solid rgba(183, 229, 186, 0.2);
+      position: relative;
+      animation: slideUpModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1f2937;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: linear-gradient(135deg, #ef5350, #e53935);
+      color: white;
+      transform: rotate(90deg) scale(1.1);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1a5140 0%, #288760 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-title i {
+      color: #b7e5ba;
+      font-size: 22px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      color: #7c8ba8;
+      margin-bottom: 26px;
+      line-height: 1.6;
+    }
+
+    .modal-step {
+      display: none;
+    }
+
+    .modal-step.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .btn-modal-primary {
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      box-shadow: 0 5px 14px rgba(183, 229, 186, 0.22);
+    }
+
+    .btn-modal-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 22px rgba(183, 229, 186, 0.32);
+    }
+
+    .btn-modal-secondary {
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      color: #1f2937;
+      border: 1.5px solid #d1d5db;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .btn-modal-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    /* OTP */
+    .otp-input-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .otp-input {
+      width: 54px;
+      height: 54px;
+      border: 2px solid #e8eef5;
+      border-radius: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.8);
+      color: #1a5140;
+    }
+
+    .otp-input:focus {
+      border-color: #b7e5ba;
+      box-shadow: 0 0 0 3px rgba(183, 229, 186, 0.1);
+      outline: none;
+      transform: scale(1.05);
+    }
+
+    .otp-input.is-error {
+      border-color: #ef5350;
+    }
+
+    .otp-error-msg {
+      text-align: center;
+      color: #ef5350;
+      font-size: 12px;
+      min-height: 18px;
+      margin-bottom: 4px;
+    }
+
+    .timer {
+      text-align: center;
+      color: #7c8ba8;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .timer.warning {
+      color: #f59e0b;
+    }
+
+    .timer.expired {
+      color: #ef5350;
+    }
+
+    .resend-btn {
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: 100%;
+      box-shadow: 0 5px 14px rgba(183, 229, 186, 0.22);
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .resend-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 22px rgba(183, 229, 186, 0.32);
+    }
+
+    .resend-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    /* ── Success Modal ── */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 81, 64, 0.7);
+      backdrop-filter: blur(5px);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .success-overlay.show {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .success-box {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 255, 1) 100%);
+      border-radius: 20px;
+      padding: 50px 40px;
+      text-align: center;
+      width: 90%;
+      max-width: 380px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(183, 229, 186, 0.15);
+      border: 1px solid rgba(183, 229, 186, 0.2);
+      animation: slideUpModal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .success-icon-wrap {
+      font-size: 60px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 18px;
+      display: block;
+      animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .success-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a5140;
+      margin-bottom: 10px;
+    }
+
+    .success-msg {
+      font-size: 13px;
+      color: #7c8ba8;
+      margin-bottom: 26px;
+      line-height: 1.6;
+    }
+
+    .btn-continue {
+      background: linear-gradient(135deg, #b7e5ba 0%, #5ca87c 100%);
+      color: white;
+      border: none;
+      padding: 13px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 5px 14px rgba(183, 229, 186, 0.22);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-continue:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 9px 22px rgba(183, 229, 186, 0.32);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUpModal {
+      from {
+        opacity: 0;
+        transform: translateY(36px) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes slideInError {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Scrollbar */
+    .modal-box::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    .modal-box::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+
+    .modal-box::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #b7e5ba, #5ca87c);
+      border-radius: 10px;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 700px) {
+      body {
+        overflow-y: auto;
+        align-items: flex-start;
+      }
+
+      .layout {
+        padding: 20px 14px;
+        min-height: unset;
+      }
+
+      .panel {
+        flex-direction: column;
+      }
+
+      .col-brand {
+        flex: none;
+        padding: 28px 24px;
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        border-right: none;
+        border-bottom: 1px solid rgba(183, 229, 186, 0.15);
+      }
+
+      .col-brand::before,
+      .col-brand::after {
+        display: none;
+      }
+
+      .brand-top {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .brand-icon-wrap {
+        margin-bottom: 0;
+        width: 52px;
+        height: 52px;
+        flex-shrink: 0;
+      }
+
+      .brand-icon-wrap i {
+        font-size: 24px;
+      }
+
+      .brand-name {
+        font-size: 20px;
+        margin-bottom: 2px;
+      }
+
+      .brand-tagline {
+        margin-bottom: 0;
+      }
+
+      .brand-desc {
+        display: none;
+      }
+
+      .trust-list {
+        display: none;
+      }
+
+      .col-form {
+        padding: 28px 24px;
+      }
+
+      .form-heading {
+        font-size: 22px;
+      }
+
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-footer {
+        grid-template-columns: 1fr;
+      }
+
+      .modal-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Back Button — now inside the panel ── */
+    .back-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 10;
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 500;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+    .back-btn:hover {
+      color: white;
+      background: rgba(255, 255, 255, 0.13);
+      transform: translateX(-3px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Geometric background -->
+  <div class="geo-bg">
+    <div class="geo-square a"></div>
+    <div class="geo-square b"></div>
+    <div class="geo-square c"></div>
+    <div class="geo-tri a"></div>
+    <div class="geo-tri b"></div>
+    <div class="geo-tri c"></div>
+    <div class="geo-ring a"></div>
+    <div class="geo-ring b"></div>
+    <div class="geo-ring c"></div>
+    <div class="geo-lines"></div>
+    <div class="geo-lines top-right"></div>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+
+      <!-- Back button — inside the card, top-left corner -->
+      <a href="{% url 'centre' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <!-- Left brand column -->
+      <div class="col-brand">
+        <div class="brand-top">
+          <div class="brand-icon-wrap">
+            <i class="fas fa-location-dot"></i>
+          </div>
+          <h1 class="brand-name">MECHALOCATE</h1>
+          <p class="brand-tagline">Swift · Superior · Secure</p>
+          <p class="brand-desc">Welcome back. Sign in to<br>access your account.</p>
+        </div>
+
+        <div class="trust-list">
+          <div class="trust-item">
+            <div class="trust-icon"><i class="fas fa-shield-halved"></i></div>
+            <div class="trust-copy">
+              <div class="trust-title">End-to-End Secure</div>
+              <div class="trust-sub">Your credentials are always encrypted</div>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon"><i class="fas fa-bolt"></i></div>
+            <div class="trust-copy">
+              <div class="trust-title">Instant Access</div>
+              <div class="trust-sub">Get on the road in under 2 minutes</div>
+            </div>
+          </div>
+          <div class="trust-item">
+            <div class="trust-icon"><i class="fas fa-headset"></i></div>
+            <div class="trust-copy">
+              <div class="trust-title">24/7 Support</div>
+              <div class="trust-sub">Our team is always ready to help</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right form column -->
+      <div class="col-form">
+        <p class="eyebrow">Welcome Back</p>
+        <h2 class="form-heading">Sign in to your<br><span>account.</span></h2>
+        <p class="form-subheading">Enter your credentials to continue</p>
+
+        <form id="loginForm" method="post" action="{% url 'login' %}" novalidate>
+          {% csrf_token %}
+          {% if login_error %}
+          <div class="server-msg error">{{ login_error }}</div>
+          {% endif %}
+
+          <!-- Email -->
+          <div class="input-wrap">
+            <input type="email" class="form-control" placeholder="Email Address" id="email" name="email"
+              autocomplete="email" value="{{ entered_email|default:'' }}">
+            <i class="fas fa-envelope input-icon"></i>
+            <div class="error-msg" id="emailError"></div>
+          </div>
+
+          <!-- Password -->
+          <div class="input-wrap">
+            <input type="password" class="form-control" placeholder="Password" id="password" name="password"
+              autocomplete="current-password">
+            <i class="fas fa-lock input-icon"></i>
+            <button type="button" class="pwd-toggle" id="pwdToggle" tabindex="-1">
+              <i class="fas fa-eye" id="pwdToggleIcon"></i>
+            </button>
+            <div class="error-msg" id="passwordError"></div>
+          </div>
+
+          <!-- Forgot password -->
+          <div class="forgot-row">
+            <a href="#" id="forgotPasswordBtn">Forgot Password?</a>
+          </div>
+
+          <div class="h-rule"></div>
+
+          <!-- Google SSO -->
+          <div id="googleButtonPlaceholder"></div>
+
+          <div class="button-row">
+            <button type="submit" class="btn-main">
+              <span class="btn-label"><i class="fas fa-sign-in-alt"></i> Sign In</span>
+              <span class="btn-arrow"><i class="fas fa-arrow-right"></i></span>
+            </button>
+            <button type="reset" class="btn-outline">
+              <span class="btn-label"><i class="fas fa-redo"></i> Clear</span>
+              <span class="btn-arrow"><i class="fas fa-redo"></i></span>
+            </button>
+          </div>
+
+          <div class="form-footer">
+            <div class="footer-box">
+              <div class="footer-label">Need Help?</div>
+              <a href="tel:+918248518232" class="footer-link">
+                <i class="fas fa-phone"></i> Contact Support
+              </a>
+            </div>
+            <div class="footer-box">
+              <div class="footer-label">New here?</div>
+              <a href="{% url 'register' %}" class="footer-link">
+                <i class="fas fa-user-plus"></i> Create Account
+              </a>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal-box">
+      <button class="modal-close" id="closeForgotBtn"><i class="fas fa-times"></i></button>
+
+      <!-- Step 1: Mobile -->
+      <div class="modal-step active" id="step1">
+        <div class="modal-title"><i class="fas fa-phone"></i> Verify Mobile</div>
+        <p class="modal-desc">Enter your registered mobile number to reset your password.</p>
+        <div class="input-wrap">
+          <input type="tel" class="form-control" placeholder="Mobile Number" id="resetMobile" maxlength="10">
+          <i class="fas fa-phone input-icon"></i>
+          <div class="error-msg" id="resetMobileError"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-primary" id="sendOtpBtn">
+            <i class="fas fa-arrow-right"></i> Send OTP
+          </button>
+          <button type="button" class="btn-modal-secondary" id="cancelForgotBtn">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: OTP -->
+      <div class="modal-step" id="step2">
+        <div class="modal-title"><i class="fas fa-shield-alt"></i> Verify OTP</div>
+        <p class="modal-desc">Enter the 4-digit OTP sent to your mobile number.</p>
+        <div class="otp-input-group">
+          <input type="text" class="otp-input" id="otp1" maxlength="1" placeholder="0">
+          <input type="text" class="otp-input" id="otp2" maxlength="1" placeholder="0">
+          <input type="text" class="otp-input" id="otp3" maxlength="1" placeholder="0">
+          <input type="text" class="otp-input" id="otp4" maxlength="1" placeholder="0">
+        </div>
+        <div class="otp-error-msg" id="otpError"></div>
+        <div class="timer" id="timerDisplay">Time remaining: <span id="timeLeft">60</span>s</div>
+        <div class="modal-actions">
+          <button type="button" class="btn-modal-primary" id="verifyOtpBtn">
+            <i class="fas fa-check"></i> Verify
+          </button>
+          <button type="button" class="btn-modal-secondary" id="backToMobileBtn">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+        </div>
+        <button type="button" class="resend-btn" id="resendOtpBtn" disabled>
+          <i class="fas fa-rotate-right"></i> Resend OTP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="success-overlay" id="successModal">
+    <div class="success-box">
+      <i class="fas fa-check-circle success-icon-wrap"></i>
+      <h2 class="success-title">You're in!</h2>
+      <p class="success-msg">Signed in successfully.<br>Redirecting you now…</p>
+      <button type="button" class="btn-continue" id="closeSuccessBtn">
+        <i class="fas fa-arrow-right"></i> Continue
+      </button>
+    </div>
+  </div>
+
+  <script>
+    /* ── Form references ── */
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailError = document.getElementById('emailError');
+    const passwordError = document.getElementById('passwordError');
+
+    /* ── Password toggle ── */
+    const pwdToggle = document.getElementById('pwdToggle');
+    const pwdToggleIcon = document.getElementById('pwdToggleIcon');
+    pwdToggle.addEventListener('click', () => {
+      const show = passwordInput.type === 'password';
+      passwordInput.type = show ? 'text' : 'password';
+      pwdToggleIcon.className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+    });
+
+    /* ── Validators ── */
+    const validators = {
+      email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+      password: v => v.length >= 6
+    };
+    const errMsgs = {
+      email: 'Please enter a valid email address',
+      password: 'Password must be at least 6 characters'
+    };
+
+    function setFieldState(input, errEl, valid, msg) {
+      if (!valid && input.value.trim() !== '') {
+        input.classList.add('is-error');
+        errEl.textContent = msg;
+        errEl.classList.add('show');
+      } else {
+        input.classList.remove('is-error');
+        errEl.textContent = '';
+        errEl.classList.remove('show');
+      }
+      return valid;
+    }
+
+    emailInput.addEventListener('blur', () => setFieldState(emailInput, emailError, validators.email(emailInput.value.trim()), errMsgs.email));
+    emailInput.addEventListener('input', () => { if (emailInput.classList.contains('is-error')) setFieldState(emailInput, emailError, validators.email(emailInput.value.trim()), errMsgs.email); });
+
+    passwordInput.addEventListener('blur', () => setFieldState(passwordInput, passwordError, validators.password(passwordInput.value), errMsgs.password));
+    passwordInput.addEventListener('input', () => { if (passwordInput.classList.contains('is-error')) setFieldState(passwordInput, passwordError, validators.password(passwordInput.value), errMsgs.password); });
+
+    loginForm.addEventListener('submit', e => {
+      const ok = validators.email(emailInput.value.trim()) && validators.password(passwordInput.value);
+      if (!ok) {
+        e.preventDefault();
+        setFieldState(emailInput, emailError, validators.email(emailInput.value.trim()), errMsgs.email);
+        setFieldState(passwordInput, passwordError, validators.password(passwordInput.value), errMsgs.password);
+      }
+    });
+
+    loginForm.addEventListener('reset', () => {
+      [emailInput, passwordInput].forEach(i => i.classList.remove('is-error'));
+      [emailError, passwordError].forEach(e => { e.textContent = ''; e.classList.remove('show'); });
+    });
+
+    /* ── Forgot Password ── */
+    const forgotModal = document.getElementById('forgotModal');
+    const closeForgotBtn = document.getElementById('closeForgotBtn');
+    const cancelForgotBtn = document.getElementById('cancelForgotBtn');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const resetMobile = document.getElementById('resetMobile');
+    const resetMobileError = document.getElementById('resetMobileError');
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const otpInputs = document.querySelectorAll('.otp-input');
+    const otpError = document.getElementById('otpError');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timeLeftEl = document.getElementById('timeLeft');
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    const backToMobileBtn = document.getElementById('backToMobileBtn');
+    const resendOtpBtn = document.getElementById('resendOtpBtn');
+
+    document.getElementById('forgotPasswordBtn').addEventListener('click', e => {
+      e.preventDefault();
+      forgotModal.classList.add('show');
+      step1.classList.add('active');
+      step2.classList.remove('active');
+      resetMobile.focus();
+    });
+
+    function closeForgotModal() {
+      forgotModal.classList.remove('show');
+      resetMobile.value = '';
+      resetMobileError.textContent = '';
+      resetMobileError.classList.remove('show');
+      resetMobile.classList.remove('is-error');
+      clearOtp();
+      stopTimer();
+    }
+
+    closeForgotBtn.addEventListener('click', closeForgotModal);
+    cancelForgotBtn.addEventListener('click', closeForgotModal);
+    forgotModal.addEventListener('click', e => { if (e.target === forgotModal) closeForgotModal(); });
+
+    sendOtpBtn.addEventListener('click', async () => {
+      const mobile = resetMobile.value.trim();
+      if (!/^\d{10}$/.test(mobile)) {
+        resetMobile.classList.add('is-error');
+        resetMobileError.textContent = 'Mobile number must be exactly 10 digits';
+        resetMobileError.classList.add('show');
+        return;
+      }
+
+      // ── ADDED: Backend Existence Check ──
+      sendOtpBtn.disabled = true;
+      const originalText = sendOtpBtn.innerHTML;
+      sendOtpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
+
+      try {
+        const response = await fetch(`/api/check-mobile/?mobile=${mobile}&type=user`);
+        const data = await response.json();
+
+        if (!data.exists) {
+          resetMobile.classList.add('is-error');
+          resetMobileError.textContent = 'Mobile number not found in our records';
+          resetMobileError.classList.add('show');
+          sendOtpBtn.disabled = false;
+          sendOtpBtn.innerHTML = originalText;
+          return;
+        }
+
+        // Proceed if exists
+        resetMobile.classList.remove('is-error');
+        resetMobileError.textContent = '';
+        resetMobileError.classList.remove('show');
+        
+        const otpResp = await fetch(`/api/send-otp/?mobile=${mobile}`);
+        const otpData = await otpResp.json();
+        
+        if (!otpData.success) {
+          resetMobile.classList.add('is-error');
+          resetMobileError.textContent = otpData.message || 'Failed to send OTP';
+          resetMobileError.classList.add('show');
+          return;
+        }
+
+        step1.classList.remove('active');
+        step2.classList.add('active');
+        otpInputs[0].focus();
+        startTimer();
+        resendOtpBtn.disabled = true;
+      } catch (error) {
+        console.error('Error checking mobile:', error);
+        resetMobileError.textContent = 'Connection error. Please try again.';
+        resetMobileError.classList.add('show');
+      } finally {
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.innerHTML = originalText;
+      }
+    });
+
+    otpInputs.forEach((inp, i) => {
+      inp.addEventListener('input', e => {
+        if (e.target.value && i < otpInputs.length - 1) otpInputs[i + 1].focus();
+        otpError.textContent = '';
+        inp.classList.remove('is-error');
+      });
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !e.target.value && i > 0) otpInputs[i - 1].focus();
+      });
+    });
+
+    verifyOtpBtn.addEventListener('click', async () => {
+      const otp = Array.from(otpInputs).map(i => i.value).join('');
+      if (!/^\d{4}$/.test(otp)) {
+        otpError.textContent = 'Please enter a valid 4-digit OTP';
+        otpInputs.forEach(i => i.classList.add('is-error'));
+        return;
+      }
+      
+      const mobile = resetMobile.value.trim();
+      const verifyResp = await fetch(`/api/verify-otp/?mobile=${mobile}&otp=${otp}`);
+      const verifyData = await verifyResp.json();
+      
+      if (verifyData.success) {
+        stopTimer();
+        closeForgotModal();
+        window.location.href = '{% url "dashboard" %}';
+      } else {
+        otpError.textContent = verifyData.message || 'Invalid OTP. Please try again.';
+        otpInputs.forEach(i => i.classList.add('is-error'));
+      }
+    });
+
+    backToMobileBtn.addEventListener('click', () => {
+      step2.classList.remove('active');
+      step1.classList.add('active');
+      stopTimer();
+      clearOtp();
+      resetMobile.focus();
+    });
+
+    resendOtpBtn.addEventListener('click', async () => {
+      const mobile = resetMobile.value.trim();
+      const otpResp = await fetch(`/api/send-otp/?mobile=${mobile}`);
+      const otpData = await otpResp.json();
+      
+      if (!otpData.success) {
+        otpError.textContent = otpData.message || 'Failed to resend OTP';
+        return;
+      }
+      
+      clearOtp();
+      startTimer();
+      resendOtpBtn.disabled = true;
+      otpInputs[0].focus();
+    });
+
+    let timerInterval;
+    function startTimer() {
+      let secs = 60;
+      timerDisplay.className = 'timer';
+      timeLeftEl.textContent = secs;
+      timerInterval = setInterval(() => {
+        secs--;
+        timeLeftEl.textContent = secs;
+        if (secs === 15) timerDisplay.classList.add('warning');
+        if (secs === 0) {
+          stopTimer();
+          timerDisplay.classList.add('expired');
+          resendOtpBtn.disabled = false;
+          otpError.textContent = 'OTP expired. Please request a new one.';
+        }
+      }, 1000);
+    }
+    function stopTimer() { clearInterval(timerInterval); }
+    function clearOtp() {
+      otpInputs.forEach(i => { i.value = ''; i.classList.remove('is-error'); });
+      otpError.textContent = '';
+    }
+
+    /* ── Success ── */
+    const successModal = document.getElementById('successModal');
+    const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+
+    function showSuccess() {
+      successModal.classList.add('show');
+      setTimeout(() => {
+        window.location.href = '{% url "dashboard" %}';
+      }, 2500);
+    }
+    closeSuccessBtn.addEventListener('click', () => {
+      window.location.href = '{% url "dashboard" %}';
+    });
+    successModal.addEventListener('click', e => {
+      if (e.target === successModal) window.location.href = '{% url "dashboard" %}';
+    });
+
+    {% if login_success %}
+    showSuccess();
+    {% endif %}
+
+    /* ── Google SSO ── */
+    window.addEventListener('load', () => {
+      if (typeof google === 'undefined' || !google.accounts) return;
+      google.accounts.id.initialize({
+        client_id: '1088181726401-9entbbkjdv9q4eonlmrnl9q4h6j6jpcr.apps.googleusercontent.com', // REMEMBER TO REPLACE THIS
+        callback: handleGoogleCredentialResponse
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("googleButtonPlaceholder"),
+        { theme: "outline", size: "large", text: "continue_with", width: "350" }
+      );
+    });
+
+    async function handleGoogleCredentialResponse(response) {
+      if (response.credential) {
+         try {
+           const res = await fetch('/api/google-login/', {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify({ credential: response.credential, action: 'login' })
+           });
+           const data = await res.json();
+           if (data.success) {
+             showSuccess();
+           } else {
+             alert('Google Login failed: ' + data.message);
+           }
+         } catch(err) {
+           console.error(err);
+           alert('Network error during Google Login');
+         }
+      }
+    }
+  </script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</body>
+
+</html> 
